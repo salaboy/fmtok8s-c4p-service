@@ -30,7 +30,7 @@ public class AgendaService {
             HttpEntity<AgendaItem> requestAgenda = new HttpEntity<>(new AgendaItem(proposal.getTitle(), proposal.getAuthor(), days[day], times[time]));
             restTemplate.postForEntity(AGENDA_SERVICE, requestAgenda, String.class);
         } catch(Exception ex){
-            log.error(">> Error contacting Agenda Service for Proposal: " + proposal.getId());
+            log.error(">> Error contacting Agenda Service ("+AGENDA_SERVICE+") for Proposal: " + proposal.getId());
             ex.printStackTrace();
         }
 

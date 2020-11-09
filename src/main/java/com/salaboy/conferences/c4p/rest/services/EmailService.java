@@ -22,7 +22,7 @@ public class EmailService {
             HttpEntity<Proposal> requestEmail = new HttpEntity<>(proposal);
             restTemplate.postForEntity(EMAIL_SERVICE + "/notification", requestEmail, String.class);
         }catch(Exception ex){
-            log.error(">> Error contacting Email Service for Proposal: " + proposal.getId());
+            log.error(">> Error contacting Email Service ("+EMAIL_SERVICE+") for Proposal: " + proposal.getId() );
             ex.printStackTrace();
         }
     }
