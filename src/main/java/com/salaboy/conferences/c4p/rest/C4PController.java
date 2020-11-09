@@ -42,7 +42,7 @@ public class C4PController {
     @Autowired
     private EmailService emailService;
 
-    @Value("${EVENTS_ENABLED:true}")
+    @Value("${EVENTS_ENABLED:false}")
     private Boolean eventsEnabled;
 
     @Value("${K_SINK:http://broker-ingress.knative-eventing.svc.cluster.local/default/default}")
