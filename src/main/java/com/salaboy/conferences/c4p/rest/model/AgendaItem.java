@@ -4,12 +4,15 @@ import java.util.Date;
 
 public class AgendaItem {
 
+    private String proposalId;
     private String title;
     private String author;
     private String day;
     private String time;
 
-    public AgendaItem(String title, String author, String day, String time) {
+
+    public AgendaItem(String proposalId, String title, String author, String day, String time) {
+        this.proposalId = proposalId;
         this.title = title;
         this.author = author;
         this.day = day;
@@ -19,6 +22,14 @@ public class AgendaItem {
 
 
     public AgendaItem() {
+    }
+
+    public String getProposalId() {
+        return proposalId;
+    }
+
+    public void setProposalId(String proposalId) {
+        this.proposalId = proposalId;
     }
 
     public String getTitle() {

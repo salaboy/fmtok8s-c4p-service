@@ -27,7 +27,7 @@ public class AgendaService {
         int time = random.nextInt(8);
         // Try sending the request, if it fails, log
         try {
-            HttpEntity<AgendaItem> requestAgenda = new HttpEntity<>(new AgendaItem(proposal.getTitle(), proposal.getAuthor(), days[day], times[time]));
+            HttpEntity<AgendaItem> requestAgenda = new HttpEntity<>(new AgendaItem(proposal.getId(), proposal.getTitle(), proposal.getAuthor(), days[day], times[time]));
             restTemplate.postForEntity(AGENDA_SERVICE, requestAgenda, String.class);
         } catch(Exception ex){
             log.error(">> Error contacting Agenda Service ("+AGENDA_SERVICE+") for Proposal: " + proposal.getId());
