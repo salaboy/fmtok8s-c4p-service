@@ -177,6 +177,7 @@ public class C4PController {
     public void decide(@PathVariable("id") String id, @RequestBody ProposalDecision decision) {
 
         log.info("> Proposal Approved Event ( " + ((decision.isApproved()) ? "Approved" : "Rejected") + ")");
+
         var proposalOptional = proposalRepository.findById(id);
 
         if (proposalOptional.isPresent()) {
@@ -188,9 +189,10 @@ public class C4PController {
             }
             proposalRepository.save(proposal);
 
+            emitProposalDecisionMadeEvent(proposal);
+
             if (decision.isApproved()) {
                 agendaService.createAgendaItem(proposal);
-                emitProposalDecisionMadeEvent(proposal);
             }
 
             // Notify Potential Speaker By Email
