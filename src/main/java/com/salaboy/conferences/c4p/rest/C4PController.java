@@ -56,8 +56,8 @@ public class C4PController {
 
     @PostMapping
     public ResponseEntity<Proposal> newProposal(@RequestBody Proposal proposal) {
-
         var saved = proposalRepository.save(proposal);
+        log.info("> \t EventsEnabled: " + eventsEnabled);
         if (eventsEnabled) {
             emitNewProposalEvent(proposal);
         }
@@ -121,7 +121,7 @@ public class C4PController {
                 proposal.reject();
             }
             proposalRepository.save(proposal);
-
+            log.info("> \t EventsEnabled: " + eventsEnabled);
             if (eventsEnabled) {
                 emitProposalDecisionMadeEvent(proposal);
             }
