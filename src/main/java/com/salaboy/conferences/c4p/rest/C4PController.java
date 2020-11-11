@@ -56,6 +56,7 @@ public class C4PController {
 
     @PostMapping
     public ResponseEntity<Proposal> newProposal(@RequestBody Proposal proposal) {
+        log.info("> REST ENDPOINT INVOKED for Accepting a new Proposal");
         var saved = proposalRepository.save(proposal);
         log.info("> \t EventsEnabled: " + eventsEnabled);
         if (eventsEnabled) {
@@ -68,7 +69,7 @@ public class C4PController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity deleteProposal(@PathVariable("id") String id) {
-
+        log.info("> REST ENDPOINT INVOKED for Deleting a Proposal by Id: " + id);
         var optionalProposal = proposalRepository.findById(id);
 
         if (optionalProposal.isPresent()) {
@@ -84,7 +85,7 @@ public class C4PController {
 
     @DeleteMapping("/")
     public ResponseEntity<Void> deleteProposals() {
-
+        log.info("> REST ENDPOINT INVOKED for Deleting all Proposals");
         proposalRepository.deleteAll();
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -102,13 +103,13 @@ public class C4PController {
 
     @GetMapping("/{id}")
     public Optional<Proposal> getById(@PathVariable("id") final String id) {
-
+        log.info("> REST ENDPOINT INVOKED for Getting a Proposal by Id: " + id);
         return proposalRepository.findById(id);
     }
 
     @PostMapping(value = "/{id}/decision")
     public void decide(@PathVariable("id") String id, @RequestBody ProposalDecision decision) {
-
+        log.info("> REST ENDPOINT INVOKED for Making a Decision for a Proposal");
         log.info("> Proposal Approved ( " + ((decision.isApproved()) ? "Approved" : "Rejected") + ")");
 
         var proposalOptional = proposalRepository.findById(id);
@@ -136,7 +137,7 @@ public class C4PController {
 
         } else {
 
-            log.error(" Proposal Not Found (" + id + ")");
+            log.error(">> Proposal Not Found (" + id + ")");
         }
     }
 
@@ -204,7 +205,7 @@ public class C4PController {
 
         postCloudEvent.bodyToMono(String.class)
                 .doOnError(t -> t.printStackTrace())
-                .doOnSuccess(s -> log.info("Cloud Event Posted to K_SINK -> " + K_SINK + ": Result: " + s))
+                .doOnSuccess(s -> log.info("> Cloud Event Posted to K_SINK -> " + K_SINK + ": Result: " + s))
                 .subscribe();
 
     }
