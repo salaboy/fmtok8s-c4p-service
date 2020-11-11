@@ -17,10 +17,11 @@ public class EmailService {
     private RestTemplate restTemplate = new RestTemplate();
 
     public void notifySpeakerByEmail(ProposalDecision decision, Proposal proposal) {
-        log.info("> Notify Speaker Event (via email: " + proposal.getEmail() + " -> " + ((decision.isApproved()) ? "Approved" : "Rejected") + ")");
+
         try {
             HttpEntity<Proposal> requestEmail = new HttpEntity<>(proposal);
             restTemplate.postForEntity(EMAIL_SERVICE + "/notification", requestEmail, String.class);
+            log.info("> Request sent to Email Service ("+EMAIL_SERVICE+") about proposal from: " + proposal.getEmail() + " -> " + ((decision.isApproved()) ? "Approved" : "Rejected") + ")");
         }catch(Exception ex){
             log.error(">> Error contacting Email Service ("+EMAIL_SERVICE+") for Proposal: " + proposal.getId() );
             ex.printStackTrace();

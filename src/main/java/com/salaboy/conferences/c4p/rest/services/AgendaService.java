@@ -19,7 +19,6 @@ public class AgendaService {
     private RestTemplate restTemplate = new RestTemplate();
 
     public void createAgendaItem(Proposal proposal) {
-        log.info("> Add Proposal To Agenda Event ");
         String[] days = {"Monday", "Tuesday"};
         String[] times = {"9:00 am", "10:00 am", "11:00 am", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm", "5:00 pm"};
         Random random = new Random();
@@ -29,6 +28,7 @@ public class AgendaService {
         try {
             HttpEntity<AgendaItem> requestAgenda = new HttpEntity<>(new AgendaItem(proposal.getId(), proposal.getTitle(), proposal.getAuthor(), days[day], times[time]));
             restTemplate.postForEntity(AGENDA_SERVICE, requestAgenda, String.class);
+            log.info("> Request Sent to Agenda Service ("+AGENDA_SERVICE+") to add accepted Proposal from: " + proposal.getEmail());
         } catch(Exception ex){
             log.error(">> Error contacting Agenda Service ("+AGENDA_SERVICE+") for Proposal: " + proposal.getId());
             ex.printStackTrace();
