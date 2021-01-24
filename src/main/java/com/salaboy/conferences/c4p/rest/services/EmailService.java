@@ -3,6 +3,7 @@ package com.salaboy.conferences.c4p.rest.services;
 import com.salaboy.conferences.c4p.rest.model.Proposal;
 import com.salaboy.conferences.c4p.rest.model.ProposalDecision;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,8 @@ public class EmailService {
     @Value("${EMAIL_SERVICE:http://fmtok8s-email}")
     private String EMAIL_SERVICE;
 
-    private RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private RestTemplate restTemplate;
 
     public void notifySpeakerByEmail(ProposalDecision decision, Proposal proposal) {
 

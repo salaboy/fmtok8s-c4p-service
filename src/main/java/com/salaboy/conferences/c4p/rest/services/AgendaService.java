@@ -3,6 +3,7 @@ package com.salaboy.conferences.c4p.rest.services;
 import com.salaboy.conferences.c4p.rest.model.AgendaItem;
 import com.salaboy.conferences.c4p.rest.model.Proposal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,8 @@ public class AgendaService {
     @Value("${AGENDA_SERVICE:http://fmtok8s-agenda}")
     private String AGENDA_SERVICE;
 
-    private RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private RestTemplate restTemplate;
 
     public void createAgendaItem(Proposal proposal) {
         String[] days = {"Monday", "Tuesday"};
