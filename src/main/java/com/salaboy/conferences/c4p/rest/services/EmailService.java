@@ -18,13 +18,15 @@ import static com.salaboy.conferences.c4p.rest.C4PController.logRequest;
 public class EmailService {
     @Value("${EMAIL_SERVICE:http://fmtok8s-email}")
     private String EMAIL_SERVICE;
-    
+
+    @Autowired
+    private WebClient webClient;
+
     public void notifySpeakerByEmail(ProposalDecision decision, Proposal proposal) {
 
-        WebClient.ResponseSpec responseSpec = WebClient.builder().baseUrl(EMAIL_SERVICE)
-                .filter(logRequest()).build()
+        WebClient.ResponseSpec responseSpec = webClient
                 .post()
-                .uri("/notification")
+                .uri(EMAIL_SERVICE + "/notification")
                 .body(BodyInserters.fromValue(proposal))
                 .retrieve();
         responseSpec.bodyToMono(String.class)

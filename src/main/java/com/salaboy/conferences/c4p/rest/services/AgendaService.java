@@ -5,15 +5,11 @@ import com.salaboy.conferences.c4p.rest.model.Proposal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Random;
-
-import static com.salaboy.conferences.c4p.rest.C4PController.logRequest;
 
 @Service
 @Slf4j
@@ -21,6 +17,8 @@ public class AgendaService {
     @Value("${AGENDA_SERVICE:http://fmtok8s-agenda}")
     private String AGENDA_SERVICE;
 
+    @Autowired
+    private WebClient webClient;
 
     public void createAgendaItem(Proposal proposal) {
         String[] days = {"Monday", "Tuesday"};
@@ -32,9 +30,9 @@ public class AgendaService {
         AgendaItem agendaItem = new AgendaItem(proposal.getId(), proposal.getTitle(), proposal.getAuthor(), days[day], times[time]);
 
 
-        WebClient.ResponseSpec responseSpec = WebClient.builder().baseUrl(AGENDA_SERVICE)
-                .filter(logRequest()).build()
+        WebClient.ResponseSpec responseSpec = webClient
                 .post()
+                .uri(AGENDA_SERVICE)
                 .body(BodyInserters.fromValue(agendaItem))
                 .retrieve();
         responseSpec.bodyToMono(String.class)
