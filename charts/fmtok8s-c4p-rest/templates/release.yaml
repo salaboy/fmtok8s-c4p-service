@@ -1,0 +1,68 @@
+{{- if .Capabilities.APIVersions.Has "jenkins.io/v1/Release" }}
+apiVersion: jenkins.io/v1
+kind: Release
+metadata:
+  creationTimestamp: "2021-02-13T13:27:51Z"
+  deletionTimestamp: null
+  name: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
+spec:
+  commits:
+  - author:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    branch: master
+    committer:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    message: |
+      chore: release 0.0.17
+    sha: 6c7b5db65efb93372368a4dd55d6d1b3bf79ac11
+  - author:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    branch: master
+    committer:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    message: |
+      chore: add variables
+    sha: 44b19fd50ecc93d73ac1460482cf4fb7c32f17e8
+  - author:
+      email: salaboy@gmail.com
+      name: salaboy
+    branch: master
+    committer:
+      email: salaboy@gmail.com
+      name: salaboy
+    message: |
+      avoid staging promotion
+    sha: a45a1a86bd7c9ced19877bb6ea2455e81c69303c
+  - author:
+      email: salaboy@gmail.com
+      name: salaboy
+    branch: master
+    committer:
+      email: salaboy@gmail.com
+      name: salaboy
+    message: |
+      update charts (https://github.com/jenkins-x/jx3-gitops-template) from master (cd501cf5c185c592663d68273b60e3413c0278fb) to master (ffc411f9b9e061f681d3788954bdc009137e5e30)
+    sha: 6da4f8bd2f8219c8d5e69bb618fa64b221b7c2de
+  - author:
+      email: salaboy@gmail.com
+      name: salaboy
+    branch: master
+    committer:
+      email: salaboy@gmail.com
+      name: salaboy
+    message: |
+      update jenkins-x (https://github.com/jenkins-x/jx3-pipeline-catalog) from master (0f4869deab149e13d1fbb948f70e8e68513ecd96) to master (aee79428308d9be55f15dbe3863f65ed3e1ab6d0)
+    sha: 9e5eeadac3435f298acc7e3fb9dd1c0b5355ef14
+  gitHttpUrl: https://github.com/salaboy/fmtok8s-c4p-rest
+  gitOwner: salaboy
+  gitRepository: fmtok8s-c4p-rest
+  name: '{{ .Chart.Name }}'
+  releaseNotesURL: https://github.com/salaboy/fmtok8s-c4p-rest/releases/tag/v0.0.18
+  version: v0.0.18
+status: {}
+ 
+{{- end }}
