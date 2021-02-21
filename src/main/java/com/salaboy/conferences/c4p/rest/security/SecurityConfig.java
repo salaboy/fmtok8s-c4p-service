@@ -36,10 +36,11 @@ public class SecurityConfig {
                         exchanges
                                 .pathMatchers(HttpMethod.POST, "/**").hasAnyAuthority("organizer")
                                 .pathMatchers(HttpMethod.DELETE, "/**").hasAnyAuthority("organizer")
+                                .pathMatchers(HttpMethod.GET, "/actuator/health").permitAll()
+                                .pathMatchers(HttpMethod.GET, "/actuator/info").permitAll()
+                                .pathMatchers(HttpMethod.GET, "/prometheus").permitAll()
                                 .anyExchange().permitAll()
-                                .matchers(EndpointRequest.to("health")).permitAll()
-                                .matchers(EndpointRequest.to("info")).permitAll()
-                                .matchers(EndpointRequest.to("prometheus")).permitAll()
+
                     )
 
                 .oauth2ResourceServer(oauth2 ->
