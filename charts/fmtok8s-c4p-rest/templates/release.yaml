@@ -1,0 +1,66 @@
+{{- if .Capabilities.APIVersions.Has "jenkins.io/v1/Release" }}
+apiVersion: jenkins.io/v1
+kind: Release
+metadata:
+  creationTimestamp: "2021-02-21T13:00:02Z"
+  deletionTimestamp: null
+  name: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
+spec:
+  commits:
+  - author:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    branch: master
+    committer:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    message: |
+      chore: release 0.0.21
+    sha: dfa0d0a912386bfc3c2bf78a4159d7bec897c58e
+  - author:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    branch: master
+    committer:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    message: |
+      chore: add variables
+    sha: aa4c16c79156f5107b0932be6f0e102c6480b107
+  - author:
+      email: Salaboy@gmail.com
+      name: salaboy
+    branch: master
+    committer:
+      email: noreply@github.com
+      name: GitHub
+    message: Update README.md
+    sha: 970d64e57e7a7505ef3a771f1e0e95016c6eaf45
+  - author:
+      email: Salaboy@gmail.com
+      name: salaboy
+    branch: master
+    committer:
+      email: noreply@github.com
+      name: GitHub
+    message: Update README.md
+    sha: 9b8cd2632d351fa27b488147d5fff39113b5e3cd
+  - author:
+      email: salaboy@gmail.com
+      name: salaboy
+    branch: master
+    committer:
+      email: salaboy@gmail.com
+      name: salaboy
+    message: |
+      adding security filter for actuator
+    sha: bf988ef167db85e66c97224f0d39c42fe7cf9f86
+  gitHttpUrl: https://github.com/salaboy/fmtok8s-c4p-rest
+  gitOwner: salaboy
+  gitRepository: fmtok8s-c4p-rest
+  name: '{{ .Chart.Name }}'
+  releaseNotesURL: https://github.com/salaboy/fmtok8s-c4p-rest/releases/tag/v0.0.22
+  version: v0.0.22
+status: {}
+ 
+{{- end }}
