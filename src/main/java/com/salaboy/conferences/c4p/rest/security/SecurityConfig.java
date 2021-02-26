@@ -1,12 +1,9 @@
 package com.salaboy.conferences.c4p.rest.security;
 
 
-import org.springframework.boot.actuate.autoconfigure.security.reactive.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,20 +11,20 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProvider;
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcReactiveOAuth2UserService;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.client.userinfo.ReactiveOAuth2UserService;
 import org.springframework.security.oauth2.client.web.DefaultReactiveOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
 import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Profile("prod")
@@ -85,34 +82,54 @@ public class SecurityConfig {
                                 .pathMatchers(HttpMethod.GET, "/prometheus").permitAll()
                                 .anyExchange().permitAll()
 
-                    )
+                    );
 
-                .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(grantedAuthoritiesExtractor())));
 
         return http.build();
     }
 
-    Converter<Jwt, Mono<AbstractAuthenticationToken>> grantedAuthoritiesExtractor() {
-        JwtAuthenticationConverter jwtAuthenticationConverter =
-                new JwtAuthenticationConverter();
 
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new GrantedAuthoritiesExtractor());
+    @Bean
+    public ReactiveOAuth2UserService<OidcUserRequest, OidcUser> oidcUserService() {
+        final OidcReactiveOAuth2UserService delegate = new OidcReactiveOAuth2UserService();
 
-        return new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter);
+        return (userRequest) -> {
+            // Delegate to the default implementation for loading a user
+            return delegate.loadUser(userRequest).map(user -> {
+                Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
+
+                user.getAuthorities().forEach(authority -> {
+                    if (authority instanceof OidcUserAuthority) {
+                        OidcUserAuthority oidcUserAuthority = (OidcUserAuthority) authority;
+                        mappedAuthorities.addAll(extractAuthorityFromClaims(oidcUserAuthority.getUserInfo().getClaims()));
+                    }
+                });
+
+                return new DefaultOidcUser(mappedAuthorities, user.getIdToken(), user.getUserInfo());
+            });
+        };
     }
 
-    static class GrantedAuthoritiesExtractor implements Converter<Jwt, Collection<GrantedAuthority>> {
-
-        @Override
-        public Collection<GrantedAuthority> convert(Jwt jwt) {
-
-            @SuppressWarnings("unchecked")
-            var roles = (List<String>) jwt.getClaims().getOrDefault("groups", Collections.emptyList());
-
-            return roles.stream()
-                    .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList());
+    public static List<GrantedAuthority> extractAuthorityFromClaims(Map<String, Object> claims) {
+        List<GrantedAuthority> grantedAuthorities = mapRolesToGrantedAuthorities(getRolesFromClaims(claims));
+        for(GrantedAuthority ga : grantedAuthorities){
+            System.out.println("> GrantedAuthority: " + ga.getAuthority());
         }
+
+        return grantedAuthorities;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Collection<String> getRolesFromClaims(Map<String, Object> claims) {
+
+        return (Collection<String>) claims.getOrDefault("groups",
+                claims.getOrDefault("roles", new ArrayList<>()));
+    }
+
+    private static List<GrantedAuthority> mapRolesToGrantedAuthorities(Collection<String> roles) {
+        return roles.stream()
+                .map("ROLE_"::concat)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 }
