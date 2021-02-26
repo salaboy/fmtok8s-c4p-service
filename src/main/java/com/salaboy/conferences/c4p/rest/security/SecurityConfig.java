@@ -31,7 +31,6 @@ public class SecurityConfig {
 
         http
                 .csrf().disable()
-
                 .authorizeExchange(exchanges ->
                         exchanges
                                 .pathMatchers(HttpMethod.POST, "/decide**").hasRole("organizer")
@@ -41,7 +40,8 @@ public class SecurityConfig {
                                 .pathMatchers(HttpMethod.GET, "/prometheus").permitAll()
                                 .anyExchange().permitAll()
 
-                    );
+                    )
+                .oauth2Client();
 
 
         return http.build();
