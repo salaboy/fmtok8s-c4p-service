@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId;
-
 
 @Service
 @Slf4j
@@ -21,13 +19,13 @@ public class EmailService {
     @Autowired
     private WebClient webClient;
 
-    public void notifySpeakerByEmail(  ProposalDecision decision, Proposal proposal) {
+    public void notifySpeakerByEmail(String bearer,  ProposalDecision decision, Proposal proposal) {
 
 
         WebClient.ResponseSpec responseSpec = webClient
                 .post()
                 .uri(EMAIL_SERVICE + "/notification")
-                .attributes(clientRegistrationId("oidc"))
+                .header("Authorization", bearer)
                 .body(BodyInserters.fromValue(proposal))
                 .retrieve();
         responseSpec.bodyToMono(String.class)

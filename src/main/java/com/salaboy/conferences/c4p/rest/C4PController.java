@@ -119,7 +119,7 @@ public class C4PController {
     }
 
     @PostMapping(value = "/{id}/decision")
-    public void decide( @PathVariable("id") String id, @RequestBody ProposalDecision decision) {
+    public void decide(@PathVariable("id") String id, @RequestBody ProposalDecision decision, @RequestHeader Map<String, String> headers) {
         log.info("> REST ENDPOINT INVOKED for Making a Decision for a Proposal");
         log.info("> Proposal Approved ( " + ((decision.isApproved()) ? "Approved" : "Rejected") + ")");
 
@@ -139,11 +139,11 @@ public class C4PController {
             }
 
             if (decision.isApproved()) {
-                agendaService.createAgendaItem( proposal);
+                agendaService.createAgendaItem(headers.get("Authorization"), proposal);
             }
 
             // Notify Potential Speaker By Email
-            emailService.notifySpeakerByEmail( decision, proposal);
+            emailService.notifySpeakerByEmail(headers.get("Authorization"), decision, proposal);
 
 
         } else {

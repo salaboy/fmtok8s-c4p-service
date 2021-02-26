@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Random;
 
 import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId;
+import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient;
 
 
 @Service
@@ -24,7 +25,7 @@ public class AgendaService {
     @Autowired
     private WebClient webClient;
 
-    public void createAgendaItem( Proposal proposal) {
+    public void createAgendaItem(String bearer, Proposal proposal) {
         String[] days = {"Monday", "Tuesday"};
         String[] times = {"9:00 am", "10:00 am", "11:00 am", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm", "5:00 pm"};
         Random random = new Random();
@@ -36,7 +37,7 @@ public class AgendaService {
         WebClient.ResponseSpec responseSpec = webClient
                 .post()
                 .uri(AGENDA_SERVICE)
-                .attributes(clientRegistrationId("oidc"))
+                .header("Authorization", bearer)
                 .body(BodyInserters.fromValue(agendaItem))
                 .retrieve();
 
