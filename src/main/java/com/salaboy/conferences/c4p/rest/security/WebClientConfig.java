@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.DefaultReactiveOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
 import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -14,19 +13,20 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
     @Bean
-    WebClient webClient(ReactiveClientRegistrationRepository clientRegistrations,
-                        ServerOAuth2AuthorizedClientRepository authorizedClients) {
+    WebClient webClient(ReactiveOAuth2AuthorizedClientManager reactiveOAuth2AuthorizedClientManager) {
         ServerOAuth2AuthorizedClientExchangeFilterFunction oauth =
-                new ServerOAuth2AuthorizedClientExchangeFilterFunction(clientRegistrations, authorizedClients);
+                new ServerOAuth2AuthorizedClientExchangeFilterFunction(reactiveOAuth2AuthorizedClientManager);
         // (optional) explicitly opt into using the oauth2Login to provide an access token implicitly
-        oauth.setDefaultOAuth2AuthorizedClient(true);
+        //oauth.setDefaultOAuth2AuthorizedClient(true);
         // (optional) set a default ClientRegistration.registrationId
-        // oauth.setDefaultClientRegistrationId("client-registration-id");
+        oauth.setDefaultClientRegistrationId("oidc");
         return WebClient.builder()
                 .filter(oauth)
                 .build();
     }
 
+
+    // https://github.com/spring-projects/spring-security/issues/8444
     @Bean
     ReactiveOAuth2AuthorizedClientManager authorizedClientManager(
             ReactiveClientRegistrationRepository clientRegistrationRepository,
