@@ -17,9 +17,9 @@ public class WebClientConfig {
         ServerOAuth2AuthorizedClientExchangeFilterFunction oauth =
                 new ServerOAuth2AuthorizedClientExchangeFilterFunction(reactiveOAuth2AuthorizedClientManager);
         // (optional) explicitly opt into using the oauth2Login to provide an access token implicitly
-        //oauth.setDefaultOAuth2AuthorizedClient(true);
+        oauth.setDefaultOAuth2AuthorizedClient(true);
         // (optional) set a default ClientRegistration.registrationId
-        oauth.setDefaultClientRegistrationId("oidc");
+        //oauth.setDefaultClientRegistrationId("oidc");
         return WebClient.builder()
                 .filter(oauth)
                 .build();
