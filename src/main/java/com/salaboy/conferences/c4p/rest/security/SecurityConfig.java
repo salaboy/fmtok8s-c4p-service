@@ -34,8 +34,8 @@ public class SecurityConfig {
 
                 .authorizeExchange(exchanges ->
                         exchanges
-                                .pathMatchers(HttpMethod.POST, "/**").hasAnyAuthority("organizer")
-                                .pathMatchers(HttpMethod.DELETE, "/**").hasAnyAuthority("organizer")
+                                .pathMatchers(HttpMethod.POST, "/decide**").hasRole("organizer")
+                                .pathMatchers(HttpMethod.POST, "/").permitAll()
                                 .pathMatchers(HttpMethod.GET, "/actuator/health").permitAll()
                                 .pathMatchers(HttpMethod.GET, "/actuator/info").permitAll()
                                 .pathMatchers(HttpMethod.GET, "/prometheus").permitAll()
