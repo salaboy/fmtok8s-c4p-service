@@ -5,12 +5,12 @@ import com.salaboy.conferences.c4p.rest.model.ProposalDecision;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import static org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient;
+import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId;
+
 
 @Service
 @Slf4j
@@ -24,13 +24,10 @@ public class EmailService {
     public void notifySpeakerByEmail(  ProposalDecision decision, Proposal proposal) {
 
 
-        WebClient.RequestBodySpec uri = webClient
+        WebClient.ResponseSpec responseSpec = webClient
                 .post()
-                .uri(EMAIL_SERVICE + "/notification");
-//        if(authorizedClient != null){
-//            uri.attributes(oauth2AuthorizedClient(authorizedClient));
-//        }
-        WebClient.ResponseSpec responseSpec = uri
+                .uri(EMAIL_SERVICE + "/notification")
+                .attributes(clientRegistrationId("gateway"))
                 .body(BodyInserters.fromValue(proposal))
                 .retrieve();
         responseSpec.bodyToMono(String.class)

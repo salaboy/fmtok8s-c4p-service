@@ -12,7 +12,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Random;
 
-import static org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient;
+import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId;
+
 
 @Service
 @Slf4j
@@ -32,14 +33,10 @@ public class AgendaService {
         // Try sending the request, if it fails, log
         AgendaItem agendaItem = new AgendaItem(proposal.getId(), proposal.getTitle(), proposal.getAuthor(), days[day], times[time]);
 
-        WebClient.RequestBodySpec uri = webClient
+        WebClient.ResponseSpec responseSpec = webClient
                 .post()
-                .uri(AGENDA_SERVICE);
-//        if(authorizedClient != null){
-//            uri.attributes(oauth2AuthorizedClient(authorizedClient));
-//        }
-        WebClient.ResponseSpec responseSpec = uri
-
+                .uri(AGENDA_SERVICE)
+                .attributes(clientRegistrationId("gateway"))
                 .body(BodyInserters.fromValue(agendaItem))
                 .retrieve();
 
