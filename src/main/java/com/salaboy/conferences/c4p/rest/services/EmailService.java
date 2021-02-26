@@ -27,7 +27,7 @@ public class EmailService {
         WebClient.ResponseSpec responseSpec = webClient
                 .post()
                 .uri(EMAIL_SERVICE + "/notification")
-                .attributes(clientRegistrationId("gateway"))
+                .attributes(clientRegistrationId("oidc"))
                 .body(BodyInserters.fromValue(proposal))
                 .retrieve();
         responseSpec.bodyToMono(String.class)

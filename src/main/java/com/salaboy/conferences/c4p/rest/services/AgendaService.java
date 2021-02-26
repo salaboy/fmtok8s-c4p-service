@@ -36,7 +36,7 @@ public class AgendaService {
         WebClient.ResponseSpec responseSpec = webClient
                 .post()
                 .uri(AGENDA_SERVICE)
-                .attributes(clientRegistrationId("gateway"))
+                .attributes(clientRegistrationId("oidc"))
                 .body(BodyInserters.fromValue(agendaItem))
                 .retrieve();
 
