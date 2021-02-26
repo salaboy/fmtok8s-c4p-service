@@ -21,12 +21,16 @@ public class EmailService {
     @Autowired
     private WebClient webClient;
 
-    public void notifySpeakerByEmail(OAuth2AuthorizedClient authorizedClient,  ProposalDecision decision, Proposal proposal) {
+    public void notifySpeakerByEmail(  ProposalDecision decision, Proposal proposal) {
 
-        WebClient.ResponseSpec responseSpec = webClient
+
+        WebClient.RequestBodySpec uri = webClient
                 .post()
-                .uri(EMAIL_SERVICE + "/notification")
-                .attributes(oauth2AuthorizedClient(authorizedClient))
+                .uri(EMAIL_SERVICE + "/notification");
+//        if(authorizedClient != null){
+//            uri.attributes(oauth2AuthorizedClient(authorizedClient));
+//        }
+        WebClient.ResponseSpec responseSpec = uri
                 .body(BodyInserters.fromValue(proposal))
                 .retrieve();
         responseSpec.bodyToMono(String.class)

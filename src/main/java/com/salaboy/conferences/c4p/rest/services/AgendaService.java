@@ -23,7 +23,7 @@ public class AgendaService {
     @Autowired
     private WebClient webClient;
 
-    public void createAgendaItem(OAuth2AuthorizedClient authorizedClient, Proposal proposal) {
+    public void createAgendaItem( Proposal proposal) {
         String[] days = {"Monday", "Tuesday"};
         String[] times = {"9:00 am", "10:00 am", "11:00 am", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm", "5:00 pm"};
         Random random = new Random();
@@ -32,13 +32,18 @@ public class AgendaService {
         // Try sending the request, if it fails, log
         AgendaItem agendaItem = new AgendaItem(proposal.getId(), proposal.getTitle(), proposal.getAuthor(), days[day], times[time]);
 
-
-        WebClient.ResponseSpec responseSpec = webClient
+        WebClient.RequestBodySpec uri = webClient
                 .post()
-                .uri(AGENDA_SERVICE)
-                .attributes(oauth2AuthorizedClient(authorizedClient))
+                .uri(AGENDA_SERVICE);
+//        if(authorizedClient != null){
+//            uri.attributes(oauth2AuthorizedClient(authorizedClient));
+//        }
+        WebClient.ResponseSpec responseSpec = uri
+
                 .body(BodyInserters.fromValue(agendaItem))
                 .retrieve();
+
+
         responseSpec.bodyToMono(String.class)
                 .doOnError(t -> {
                     t.printStackTrace();

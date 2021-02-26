@@ -21,8 +21,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProvider;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProviderBuilder;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultReactiveOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
 import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
 import org.springframework.web.bind.annotation.*;
@@ -55,19 +59,6 @@ public class C4PController {
     private String K_SINK;
 
 
-    @Bean
-    WebClient webClient(ReactiveClientRegistrationRepository clientRegistrations,
-                        ServerOAuth2AuthorizedClientRepository authorizedClients) {
-        ServerOAuth2AuthorizedClientExchangeFilterFunction oauth =
-                new ServerOAuth2AuthorizedClientExchangeFilterFunction(clientRegistrations, authorizedClients);
-        // (optional) explicitly opt into using the oauth2Login to provide an access token implicitly
-         oauth.setDefaultOAuth2AuthorizedClient(true);
-        // (optional) set a default ClientRegistration.registrationId
-        // oauth.setDefaultClientRegistrationId("client-registration-id");
-        return WebClient.builder()
-                .filter(oauth)
-                .build();
-    }
 
     public C4PController(ProposalRepository proposalRepository) {
 
@@ -128,7 +119,7 @@ public class C4PController {
     }
 
     @PostMapping(value = "/{id}/decision")
-    public void decide(@RegisteredOAuth2AuthorizedClient("gateway") OAuth2AuthorizedClient authorizedClient, @PathVariable("id") String id, @RequestBody ProposalDecision decision) {
+    public void decide( @PathVariable("id") String id, @RequestBody ProposalDecision decision) {
         log.info("> REST ENDPOINT INVOKED for Making a Decision for a Proposal");
         log.info("> Proposal Approved ( " + ((decision.isApproved()) ? "Approved" : "Rejected") + ")");
 
@@ -148,11 +139,11 @@ public class C4PController {
             }
 
             if (decision.isApproved()) {
-                agendaService.createAgendaItem(authorizedClient, proposal);
+                agendaService.createAgendaItem( proposal);
             }
 
             // Notify Potential Speaker By Email
-            emailService.notifySpeakerByEmail(authorizedClient, decision, proposal);
+            emailService.notifySpeakerByEmail( decision, proposal);
 
 
         } else {
