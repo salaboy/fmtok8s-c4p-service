@@ -26,6 +26,7 @@ public class AgendaService {
     private WebClient webClient;
 
     public void createAgendaItem(String bearer, Proposal proposal) {
+        System.out.println("Bearer here: " + bearer);
         String[] days = {"Monday", "Tuesday"};
         String[] times = {"9:00 am", "10:00 am", "11:00 am", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm", "5:00 pm"};
         Random random = new Random();
@@ -37,6 +38,7 @@ public class AgendaService {
         WebClient.ResponseSpec responseSpec = webClient
                 .post()
                 .uri(AGENDA_SERVICE)
+                .header("Authorization", bearer)
                 .body(BodyInserters.fromValue(agendaItem))
                 .retrieve();
 

@@ -122,6 +122,10 @@ public class C4PController {
     public void decide(@PathVariable("id") String id, @RequestBody ProposalDecision decision, @RequestHeader Map<String, String> headers) {
         log.info("> REST ENDPOINT INVOKED for Making a Decision for a Proposal");
         log.info("> Proposal Approved ( " + ((decision.isApproved()) ? "Approved" : "Rejected") + ")");
+        log.info("> Headers: \n");
+        for(String key : headers.keySet()){
+            log.info("> Header Key: " + key + " - > Value: " + headers.get(key));
+        }
 
         var proposalOptional = proposalRepository.findById(id);
 

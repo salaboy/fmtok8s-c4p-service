@@ -20,11 +20,12 @@ public class EmailService {
     private WebClient webClient;
 
     public void notifySpeakerByEmail(String bearer,  ProposalDecision decision, Proposal proposal) {
-
+        System.out.println("Bearer here: " + bearer);
 
         WebClient.ResponseSpec responseSpec = webClient
                 .post()
-                .uri(EMAIL_SERVICE + "/notification")   
+                .uri(EMAIL_SERVICE + "/notification")
+                .header("Authorization", bearer)
                 .body(BodyInserters.fromValue(proposal))
                 .retrieve();
         responseSpec.bodyToMono(String.class)
