@@ -1,0 +1,48 @@
+{{- if .Capabilities.APIVersions.Has "jenkins.io/v1/Release" }}
+apiVersion: jenkins.io/v1
+kind: Release
+metadata:
+  creationTimestamp: "2021-02-27T14:08:56Z"
+  deletionTimestamp: null
+  name: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
+spec:
+  commits:
+  - author:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    branch: master
+    committer:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    message: |
+      chore: release 0.0.33
+    sha: ecb2433571538b273b656d5ac21c6fd697b8e881
+  - author:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    branch: master
+    committer:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    message: |
+      chore: add variables
+    sha: b81db16f25d30209f6372456ba4b0462a47237b2
+  - author:
+      email: salaboy@gmail.com
+      name: salaboy
+    branch: master
+    committer:
+      email: salaboy@gmail.com
+      name: salaboy
+    message: |
+      using default auth client
+    sha: fc75eced34c67520e7e2d459863ea5c2187d0512
+  gitHttpUrl: https://github.com/salaboy/fmtok8s-c4p-rest
+  gitOwner: salaboy
+  gitRepository: fmtok8s-c4p-rest
+  name: '{{ .Chart.Name }}'
+  releaseNotesURL: https://github.com/salaboy/fmtok8s-c4p-rest/releases/tag/v0.0.34
+  version: v0.0.34
+status: {}
+ 
+{{- end }}
