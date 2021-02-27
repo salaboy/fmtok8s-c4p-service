@@ -37,7 +37,6 @@ public class AgendaService {
         WebClient.ResponseSpec responseSpec = webClient
                 .post()
                 .uri(AGENDA_SERVICE)
-                .header("Authorization", bearer)
                 .body(BodyInserters.fromValue(agendaItem))
                 .retrieve();
 
