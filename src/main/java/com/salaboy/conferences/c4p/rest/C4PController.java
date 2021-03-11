@@ -3,6 +3,7 @@ package com.salaboy.conferences.c4p.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salaboy.cloudevents.helper.CloudEventsHelper;
+import com.salaboy.conferences.c4p.rest.metrics.C4PMetrics;
 import com.salaboy.conferences.c4p.rest.model.Proposal;
 import com.salaboy.conferences.c4p.rest.model.ProposalDecision;
 import com.salaboy.conferences.c4p.rest.model.ProposalStatus;
@@ -48,6 +49,8 @@ public class C4PController {
     @Value("${K_SINK:http://broker-ingress.knative-eventing.svc.cluster.local/default/default}")
     private String K_SINK;
 
+    @Autowired
+    private C4PMetrics c4PMetrics;
 
 
     public C4PController(ProposalRepository proposalRepository) {
@@ -59,6 +62,7 @@ public class C4PController {
     public ResponseEntity<Proposal> newProposal(@RequestBody Proposal proposal) {
         log.info("> REST ENDPOINT INVOKED for Accepting a new Proposal");
         var saved = proposalRepository.save(proposal);
+        c4PMetrics.getSubmissions().increment();
         log.info("> \t EventsEnabled: " + eventsEnabled);
         if (eventsEnabled) {
             emitNewProposalEvent(proposal);
@@ -134,6 +138,9 @@ public class C4PController {
 
             if (decision.isApproved()) {
                 agendaService.createAgendaItem(headers.get("Authorization"), proposal);
+                c4PMetrics.getApproved().increment();
+            }else{
+                c4PMetrics.getRejected().increment();
             }
 
             // Notify Potential Speaker By Email
