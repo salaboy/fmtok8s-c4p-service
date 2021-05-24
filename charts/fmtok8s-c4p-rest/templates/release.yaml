@@ -1,0 +1,47 @@
+{{- if .Capabilities.APIVersions.Has "jenkins.io/v1/Release" }}
+apiVersion: jenkins.io/v1
+kind: Release
+metadata:
+  creationTimestamp: "2021-05-24T08:45:47Z"
+  deletionTimestamp: null
+  name: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
+spec:
+  commits:
+  - author:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    branch: master
+    committer:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    message: |
+      chore: release 0.0.43
+    sha: 173079f95256445833520b53550ca9e79754161d
+  - author:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    branch: master
+    committer:
+      email: jenkins-x@googlegroups.com
+      name: jenkins-x-bot
+    message: |
+      chore: add variables
+    sha: d2a72467d5c5fb78e8edf4d5ccec1836fa84ae79
+  - author:
+      email: Salaboy@gmail.com
+      name: salaboy
+    branch: master
+    committer:
+      email: noreply@github.com
+      name: GitHub
+    message: Update ksvc.yaml
+    sha: 69eb446fbfb327a1076a2b68502092c72069887d
+  gitHttpUrl: https://github.com/salaboy/fmtok8s-c4p-rest
+  gitOwner: salaboy
+  gitRepository: fmtok8s-c4p-rest
+  name: '{{ .Chart.Name }}'
+  releaseNotesURL: https://github.com/salaboy/fmtok8s-c4p-rest/releases/tag/v0.0.44
+  version: v0.0.44
+status: {}
+ 
+{{- end }}
