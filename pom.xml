@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.3.RELEASE</version>
+        <version>2.6.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.salaboy.conferences</groupId>
@@ -16,12 +16,23 @@
 
     <properties>
         <java.version>11</java.version>
-
+        <cloudevents.version>2.3.0</cloudevents.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <spring.cloud.contract>2.2.1.RELEASE</spring.cloud.contract>
+        <spring-cloud.version>2021.0.0</spring-cloud.version>
         <springdoc-openapi-ui.version>1.2.32</springdoc-openapi-ui.version>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -43,8 +54,18 @@
         </dependency>
         <dependency>
             <groupId>io.cloudevents</groupId>
+            <artifactId>cloudevents-spring</artifactId>
+            <version>${cloudevents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cloudevents</groupId>
+            <artifactId>cloudevents-http-basic</artifactId>
+            <version>${cloudevents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cloudevents</groupId>
             <artifactId>cloudevents-json-jackson</artifactId>
-            <version>2.0.0-milestone1</version>
+            <version>${cloudevents.version}</version>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -73,11 +94,15 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-contract-verifier</artifactId>
-            <version>${spring.cloud.contract}</version>
             <scope>test</scope>
         </dependency>
 
@@ -153,13 +178,13 @@
             <plugin>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-                <version>${spring.cloud.contract}</version>
+                <version>3.1.0</version>
                 <extensions>true</extensions>
                 <configuration>
+                    <testFramework>JUNIT5</testFramework>
                     <packageWithBaseClasses>com.salaboy.conferences.c4p.rest</packageWithBaseClasses>
                     <testMode>EXPLICIT</testMode>
                 </configuration>
-
             </plugin>
         </plugins>
     </build>

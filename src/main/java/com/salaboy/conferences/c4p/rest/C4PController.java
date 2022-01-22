@@ -2,7 +2,6 @@ package com.salaboy.conferences.c4p.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.salaboy.cloudevents.helper.CloudEventsHelper;
 import com.salaboy.conferences.c4p.rest.metrics.C4PMetrics;
 import com.salaboy.conferences.c4p.rest.model.Proposal;
 import com.salaboy.conferences.c4p.rest.model.ProposalDecision;
@@ -14,18 +13,24 @@ import io.cloudevents.core.builder.CloudEventBuilder;
 import io.cloudevents.core.format.EventFormat;
 import io.cloudevents.core.provider.EventFormatProvider;
 import io.cloudevents.jackson.JsonFormat;
-import io.zeebe.cloudevents.ZeebeCloudEventsHelper;
+import io.cloudevents.spring.webflux.CloudEventHttpMessageReader;
+import io.cloudevents.spring.webflux.CloudEventHttpMessageWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.codec.CodecCustomizer;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.CodecConfigurer;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.*;
 
@@ -53,6 +58,22 @@ public class C4PController {
     private C4PMetrics c4PMetrics;
 
 
+    @Autowired
+    private WebClient.Builder rest;
+
+    @Configuration
+    public static class CloudEventHandlerConfiguration implements CodecCustomizer {
+
+        @Override
+        public void customize(CodecConfigurer configurer) {
+            configurer.customCodecs().register(new CloudEventHttpMessageReader());
+            configurer.customCodecs().register(new CloudEventHttpMessageWriter());
+        }
+
+    }
+
+
+
     public C4PController(ProposalRepository proposalRepository) {
 
         this.proposalRepository = proposalRepository;
@@ -65,7 +86,11 @@ public class C4PController {
         c4PMetrics.getSubmissions().increment();
         log.info("> \t EventsEnabled: " + eventsEnabled);
         if (eventsEnabled) {
-            emitNewProposalEvent(proposal);
+            try {
+                emitNewProposalEvent(proposal);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
         }
 
         return ResponseEntity.ok().body(saved);
@@ -133,7 +158,11 @@ public class C4PController {
             proposalRepository.save(proposal);
             log.info("> \t EventsEnabled: " + eventsEnabled);
             if (eventsEnabled) {
-                emitProposalDecisionMadeEvent(proposal);
+                try {
+                    emitProposalDecisionMadeEvent(proposal);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
 
             if (decision.isApproved()) {
@@ -154,71 +183,54 @@ public class C4PController {
     }
 
 
-    private void emitNewProposalEvent(Proposal proposal) {
-
-        String proposalString = null;
-        try {
-            proposalString = objectMapper.writeValueAsString(proposal);
-            proposalString = objectMapper.writeValueAsString(proposalString); //needs double quoted ??
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+    private void emitNewProposalEvent(Proposal proposal) throws JsonProcessingException {
         CloudEventBuilder cloudEventBuilder = CloudEventBuilder.v1()
                 .withId(UUID.randomUUID().toString())
-                .withTime(OffsetDateTime.now().toZonedDateTime()) // bug-> https://github.com/cloudevents/sdk-java/issues/200
                 .withType("C4P.ProposalReceived")
                 .withSource(URI.create("c4p-service.default.svc.cluster.local"))
-                .withData(proposalString.getBytes())
-                .withDataContentType("application/json")
+                .withData(objectMapper.writeValueAsString(proposal).getBytes(StandardCharsets.UTF_8))
+                .withDataContentType("application/json; charset=UTF-8")
                 .withSubject(proposal.getTitle());
 
-        CloudEvent zeebeCloudEvent = ZeebeCloudEventsHelper
-                .buildZeebeCloudEvent(cloudEventBuilder)
-                .withCorrelationKey(proposal.getId()).build();
+        CloudEvent cloudEvent = cloudEventBuilder.build();
 
-        logCloudEvent(zeebeCloudEvent);
-        WebClient webClient = WebClient.builder().baseUrl(K_SINK).filter(logRequest()).build();
+        logCloudEvent(cloudEvent);
 
-        WebClient.ResponseSpec postCloudEvent = CloudEventsHelper.createPostCloudEvent(webClient, zeebeCloudEvent);
+        log.info("Producing CloudEvent with Proposal: " + proposal);
 
-        postCloudEvent.bodyToMono(String.class)
+        rest.baseUrl(K_SINK).filter(logRequest()).build()
+                .post().bodyValue(cloudEvent)
+                .retrieve()
+                .bodyToMono(String.class)
                 .doOnError(t -> t.printStackTrace())
-                .doOnSuccess(s -> log.info("Cloud Event Posted to K_SINK -> " + K_SINK + ": Result: " + s))
-                .subscribe();
+                .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
+
     }
 
 
-    private void emitProposalDecisionMadeEvent(Proposal proposal) {
+    private void emitProposalDecisionMadeEvent(Proposal proposal) throws JsonProcessingException {
 
-        String proposalString = null;
-        try {
-            proposalString = objectMapper.writeValueAsString(proposal);
-            proposalString = objectMapper.writeValueAsString(proposalString); //needs double quoted ??
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+
         CloudEventBuilder cloudEventBuilder = CloudEventBuilder.v1()
                 .withId(UUID.randomUUID().toString())
-                .withTime(OffsetDateTime.now().toZonedDateTime()) // bug-> https://github.com/cloudevents/sdk-java/issues/200
                 .withType("C4P.ProposalDecisionMade")
                 .withSource(URI.create("c4p-service.default.svc.cluster.local"))
-                .withData(proposalString.getBytes())
-                .withDataContentType("application/json")
+                .withData(objectMapper.writeValueAsString(proposal).getBytes(StandardCharsets.UTF_8))
+                .withDataContentType("application/json; charset=UTF-8")
                 .withSubject(proposal.getTitle());
 
-        CloudEvent zeebeCloudEvent = ZeebeCloudEventsHelper
-                .buildZeebeCloudEvent(cloudEventBuilder)
-                .withCorrelationKey(proposal.getId()).build();
+        CloudEvent cloudEvent = cloudEventBuilder.build();
 
-        logCloudEvent(zeebeCloudEvent);
-        WebClient webClient = WebClient.builder().baseUrl(K_SINK).filter(logRequest()).build();
+        logCloudEvent(cloudEvent);
 
-        WebClient.ResponseSpec postCloudEvent = CloudEventsHelper.createPostCloudEvent(webClient, zeebeCloudEvent);
+        log.info("Producing CloudEvent with Proposal: " + proposal);
 
-        postCloudEvent.bodyToMono(String.class)
+        rest.baseUrl(K_SINK).filter(logRequest()).build()
+                .post().bodyValue(cloudEvent)
+                .retrieve()
+                .bodyToMono(String.class)
                 .doOnError(t -> t.printStackTrace())
-                .doOnSuccess(s -> log.info("> Cloud Event Posted to K_SINK -> " + K_SINK + ": Result: " + s))
-                .subscribe();
+                .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
 
     }
 
