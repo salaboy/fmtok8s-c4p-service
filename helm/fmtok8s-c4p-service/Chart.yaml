@@ -1,0 +1,5 @@
+apiVersion: v2
+description: FMTOK8S C4P Service Helm chart for Kubernetes
+name: fmtok8s-c4p-service
+version: 0.1.0
+icon: https://salaboy.files.wordpress.com/2019/07/avatar.png 
