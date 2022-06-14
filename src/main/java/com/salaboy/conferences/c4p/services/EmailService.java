@@ -18,7 +18,7 @@ public class EmailService {
     private static final Logger log = LoggerFactory.getLogger(EmailService.class);
 
     @Autowired
-    private WebClient webClient;
+    private WebClient.Builder webClient;
 
     @Autowired
     private ServiceConfiguration config;
@@ -26,7 +26,7 @@ public class EmailService {
     public Mono<Notification> notifySpeakerByEmail(String bearer, Proposal proposal) {
         log.info("Bearer here: {} ", bearer);
         log.info("Email Service URL {}", config.getEmail());
-        return webClient.post()
+        return webClient.build().post()
                 .uri(config.getEmail() + "/notification")
                 .header("Authorization", bearer)
                 .body(BodyInserters.fromValue(proposal))

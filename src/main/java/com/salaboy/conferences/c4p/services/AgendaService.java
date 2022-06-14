@@ -21,7 +21,7 @@ public class AgendaService {
     private static final Logger log = LoggerFactory.getLogger(AgendaService.class);
 
     @Autowired
-    private WebClient webClient;
+    private WebClient.Builder webClient;
 
     @Autowired
     private ServiceConfiguration config;
@@ -37,7 +37,7 @@ public class AgendaService {
         // Try sending the request, if it fails, log
         AgendaItem agendaItem = new AgendaItem(proposal, proposal.title(), proposal.author(), days[day], times[time]);
         log.info("Agenda Service URL {}", config.getAgenda());
-        return webClient.post()
+        return webClient.build().post()
                 .uri(config.getAgenda())
                 .header("Authorization", bearer)
                 .body(BodyInserters.fromValue(agendaItem))
