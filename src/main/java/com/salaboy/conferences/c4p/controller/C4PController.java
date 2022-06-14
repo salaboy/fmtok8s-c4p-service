@@ -154,12 +154,16 @@ public class C4PController {
                                 emitProposalDecisionMadeEvent(savedProposal);
                                 if (decision.approved()) {
                                     agendaService.publishAgendaItem(headers.get("Authorization"), savedProposal).subscribe();
+
+                                    //@TODO: I can store this in the C4P service for consistency
                                     c4PMetrics.getApproved().increment();
                                 } else {
                                     c4PMetrics.getRejected().increment();
                                 }
                                 // Notify Potential Speaker By Email
                                 emailService.notifySpeakerByEmail(headers.get("Authorization"), savedProposal).subscribe();
+                                //@TODO: I can store this in the C4P service for consistency
+
                                 return savedProposal;
                             });
                 })
