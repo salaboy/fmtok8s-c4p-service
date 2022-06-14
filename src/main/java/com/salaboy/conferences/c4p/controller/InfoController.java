@@ -1,4 +1,4 @@
-package com.salaboy.conferences.c4p;
+package com.salaboy.conferences.c4p.controller;
 
 import com.salaboy.conferences.c4p.model.ServiceInfo;
 import org.springframework.beans.factory.annotation.Value;

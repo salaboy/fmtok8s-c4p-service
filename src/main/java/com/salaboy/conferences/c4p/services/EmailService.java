@@ -1,39 +1,43 @@
 package com.salaboy.conferences.c4p.services;
 
+import com.salaboy.conferences.c4p.config.ServiceConfiguration;
+import com.salaboy.conferences.c4p.model.Notification;
 import com.salaboy.conferences.c4p.model.Proposal;
-import com.salaboy.conferences.c4p.model.ProposalDecision;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 
-@Service
-@Slf4j
+@Component
 public class EmailService {
-    @Value("${EMAIL_SERVICE:http://fmtok8s-email}")
-    private String EMAIL_SERVICE;
+
+    private static final Logger log = LoggerFactory.getLogger(EmailService.class);
 
     @Autowired
     private WebClient webClient;
 
-    public void notifySpeakerByEmail(String bearer,  ProposalDecision decision, Proposal proposal) {
-        System.out.println("Bearer here: " + bearer);
+    @Autowired
+    private ServiceConfiguration config;
 
-        WebClient.ResponseSpec responseSpec = webClient
-                .post()
-                .uri(EMAIL_SERVICE + "/notification")
+    public Mono<Notification> notifySpeakerByEmail(String bearer, Proposal proposal) {
+        log.info("Bearer here: {} ", bearer);
+        log.info("Email Service URL {}", config.getEmail());
+        return webClient.post()
+                .uri(config.getEmail() + "/notification")
                 .header("Authorization", bearer)
                 .body(BodyInserters.fromValue(proposal))
-                .retrieve();
-        responseSpec.bodyToMono(String.class)
-                .doOnError(t -> {
-                    t.printStackTrace();
-                    log.error(">> Error contacting Email Service ("+EMAIL_SERVICE+") for Proposal: " + proposal.getId() );
+                .retrieve()
+                .bodyToMono(Notification.class)
+                .doOnSuccess(result -> {
+                    log.info("Notification Sent Id: {}, title: {}, to: {}.", result.id(), result.title(), result.to());
                 })
-                .doOnSuccess(s -> log.info("> Request sent to Email Service ("+EMAIL_SERVICE+") about proposal from: " + proposal.getEmail() + " -> " + ((decision.isApproved()) ? "Approved" : "Rejected") + ")"))
-                .subscribe();
+                .doOnError(result -> {
+                    result.fillInStackTrace();
+                    log.error("Error publishing event. Cause: {}. Message: {}", result.getCause(), result.getMessage());
+                });
     }
 }
