@@ -23,23 +23,19 @@ spec:
             value: dev
           - name: VERSION
             value: {{ .Chart.Version }}
-          - name: SPRING_DATASOURCE_DRIVERCLASSNAME
-            value: org.postgresql.Driver
-          - name: SPRING_DATASOURCE_PLATFORM
-            value: org.hibernate.dialect.PostgreSQLDialect
-          - name: SPRING_DATASOURCE_URL
+          - name: SPRING_R2DBC_URL
             value: jdbc:postgresql://${DB_ENDPOINT}:${DB_PORT}/postgres
-          - name: SPRING_DATASOURCE_USERNAME
+          - name: SPRING_R2DBC_USERNAME
             value: postgres
           - name: DB_ENDPOINT
             value: {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local
           - name: DB_PORT
             value: "5432"
-          - name: SPRING_DATASOURCE_PASSWORD
+          - name: SPRING_R2DBC_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-postgresql
-                key: postgresql-password
+                key: postgres-password
           - name: POD_NODE_NAME
             valueFrom:
               fieldRef:
