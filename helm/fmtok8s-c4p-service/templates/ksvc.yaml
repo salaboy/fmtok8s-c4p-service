@@ -24,7 +24,7 @@ spec:
           - name: VERSION
             value: {{ .Chart.Version }}
           - name: SPRING_R2DBC_URL
-            value: jdbc:postgresql://${DB_ENDPOINT}:${DB_PORT}/postgres
+            value: r2dbc:postgresql://${DB_ENDPOINT}:${DB_PORT}/postgres
           - name: SPRING_R2DBC_USERNAME
             value: postgres
           - name: DB_ENDPOINT

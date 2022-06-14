@@ -9,6 +9,8 @@ image:
 
 postgresql:
   enabled: true
+  auth:
+    enablePostgresUser: true
 
 # define environment variables here as a map of key: value
 env:
@@ -26,11 +28,11 @@ service:
 
 resources:
   limits:
-    cpu: 1000m
-    memory: 1768Mi
+    cpu: "1"
+    memory: 256Mi
   requests:
-    cpu: 650m
-    memory: 1024Mi
+    cpu: "0.1"
+    memory: 256Mi
 probePath: /actuator/health
 livenessProbe:
   initialDelaySeconds: 60
