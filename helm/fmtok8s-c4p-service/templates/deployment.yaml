@@ -47,7 +47,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: {{ .Release.Name }}-postgresql
-                key: postgresql-password
+                key: postgres-password
           - name: POD_NODE_NAME
             valueFrom:
               fieldRef:
