@@ -1,1 +1,1 @@
-io.r2dbc.postgresql.PostgreSqlHints
+org.springframework.nativex.type.NativeConfiguration=io.r2dbc.postgresql.PostgreSqlHints
