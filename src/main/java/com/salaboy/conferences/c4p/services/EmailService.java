@@ -6,6 +6,7 @@ import com.salaboy.conferences.c4p.model.Proposal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -29,6 +30,7 @@ public class EmailService {
         return webClient.build().post()
                 .uri(config.getEmail() + "/notification")
                 .header("Authorization", bearer)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(proposal))
                 .retrieve()
                 .bodyToMono(Notification.class)

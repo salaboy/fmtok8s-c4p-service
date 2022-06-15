@@ -2,11 +2,11 @@ package com.salaboy.conferences.c4p.services;
 
 import com.salaboy.conferences.c4p.config.ServiceConfiguration;
 import com.salaboy.conferences.c4p.model.AgendaItem;
-import com.salaboy.conferences.c4p.model.Notification;
 import com.salaboy.conferences.c4p.model.Proposal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -40,6 +40,7 @@ public class AgendaService {
         return webClient.build().post()
                 .uri(config.getAgenda())
                 .header("Authorization", bearer)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(agendaItem))
                 .retrieve()
                 .bodyToMono(AgendaItem.class)
