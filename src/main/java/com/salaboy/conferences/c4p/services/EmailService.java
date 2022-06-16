@@ -31,6 +31,7 @@ public class EmailService {
                 .uri(config.getEmail() + "/notification")
                 .header("Authorization", bearer)
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(proposal))
                 .retrieve()
                 .bodyToMono(Notification.class)

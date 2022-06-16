@@ -1,9 +1,11 @@
 package com.salaboy.conferences.c4p.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.relational.core.mapping.Table;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "proposals")
 public record Proposal(@Id
                        Long id,

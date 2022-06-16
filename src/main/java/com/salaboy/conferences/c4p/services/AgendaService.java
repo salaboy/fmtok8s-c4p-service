@@ -41,6 +41,7 @@ public class AgendaService {
                 .uri(config.getAgenda())
                 .header("Authorization", bearer)
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(agendaItem))
                 .retrieve()
                 .bodyToMono(AgendaItem.class)
