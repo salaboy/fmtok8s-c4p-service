@@ -17,8 +17,9 @@ env:
 
 # enable this flag to use knative serve to deploy the app
 knative:
+  # You can add traffic rules here to customize the Knative Serving rules
   enabled: false
-# You can add traffic rules here to customize the Knative Serving rules
+#  traffic:
 #  - latestRevision: false
 #    percent: 50
 #    revisionName: fmtok8s-c4p-00001
