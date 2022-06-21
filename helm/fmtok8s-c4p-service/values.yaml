@@ -4,7 +4,7 @@
 replicaCount: 1
 image:
   repository: ghcr.io/salaboy/fmtok8s-c4p-service
-  tag: main-native
+  tag: v0.0.1-native
   pullPolicy: Always
 
 postgresql:
@@ -16,8 +16,14 @@ postgresql:
 env:
 
 # enable this flag to use knative serve to deploy the app
-knativeDeploy: false
-
+knative:
+  enabled: false
+# You can add traffic rules here to customize the Knative Serving rules
+#  - latestRevision: false
+#    percent: 50
+#    revisionName: fmtok8s-c4p-00001
+#  - latestRevision: true
+#    percent: 50
 
 service:
   name: fmtok8s-c4p
