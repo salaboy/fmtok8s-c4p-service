@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -64,8 +63,8 @@ public class C4PServiceApplicationTest {
 
     @DynamicPropertySource
     static void redisProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.services.config.agenda", () -> mockWebServer.url("/agenda/").uri());
-        registry.add("app.services.config.email", () -> mockWebServer.url("/email/").uri());
+        registry.add("c4p.agendaService", () -> mockWebServer.url("/agenda/").uri());
+        registry.add("c4p.emailService", () -> mockWebServer.url("/email/").uri());
         registry.add("spring.r2dbc.url", () -> "r2dbc:postgresql://" + posgresql.getHost() + ":" + posgresql.getMappedPort(POSTGRESQL_PORT) + "/postgres");
         registry.add("spring.r2dbc.username", () -> "postgres");
     }

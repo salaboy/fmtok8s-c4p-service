@@ -36,9 +36,9 @@ public class AgendaService {
 
         // Try sending the request, if it fails, log
         AgendaItem agendaItem = new AgendaItem(proposal, proposal.title(), proposal.author(), days[day], times[time]);
-        log.info("Agenda Service URL {}", config.getAgenda());
+        log.info("Agenda Service URL {}", config.getAgendaService());
         return webClient.build().post()
-                .uri(config.getAgenda())
+                .uri(config.getAgendaService())
                 .header("Authorization", bearer)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)

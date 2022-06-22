@@ -26,9 +26,9 @@ public class EmailService {
 
     public Mono<Notification> notifySpeakerByEmail(String bearer, Proposal proposal) {
         log.info("Bearer here: {} ", bearer);
-        log.info("Email Service URL {}", config.getEmail());
+        log.info("Email Service URL {}", config.getEmailService());
         return webClient.build().post()
-                .uri(config.getEmail() + "/notification")
+                .uri(config.getEmailService() + "/notification")
                 .header("Authorization", bearer)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)

@@ -6,43 +6,43 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 
 @Component
-@ConfigurationProperties(prefix = "app.services.config")
+@ConfigurationProperties(prefix = "c4p")
 public class ServiceConfiguration {
-    private URI email;
-    private URI agenda;
-    private URI broker;
-    private boolean enabled;
+    private URI emailService;
+    private URI agendaService;
+    private URI brokerURL;
+    private boolean brokerEnabled;
 
-    public void setEmail(URI email) {
-        this.email = email;
+    public void setEmailService(URI emailService) {
+        this.emailService = emailService;
     }
 
-    public void setAgenda(URI agenda) {
-        this.agenda = agenda;
+    public void setAgendaService(URI agendaService) {
+        this.agendaService = agendaService;
     }
 
-    public void setBroker(URI broker) {
-        this.broker = broker;
+    public void setBrokerURL(URI brokerURL) {
+        this.brokerURL = brokerURL;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setBrokerEnabled(boolean brokerEnabled) {
+        this.brokerEnabled = brokerEnabled;
     }
 
-    public URI getEmail() {
-        return email;
+    public URI getEmailService() {
+        return emailService;
     }
 
-    public URI getAgenda() {
-        return agenda;
+    public URI getAgendaService() {
+        return agendaService;
     }
 
-    public URI getBroker() {
-        return broker;
+    public URI getBrokerURL() {
+        return brokerURL;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isBrokerEnabled() {
+        return brokerEnabled;
     }
 }
 
