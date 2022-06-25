@@ -25,8 +25,8 @@ public class InfoController {
     public ServiceInfo getInfo() {
         return new ServiceInfo(
                 "C4P Service",
-                "v"+version,
-                "https://github.com/salaboy/fmtok8s-c4p-service/releases/tag/v" + version,
+                version,
+                "https://github.com/salaboy/fmtok8s-c4p-service/releases/tag/" + version,
                 podId,
                 podNamespace,
                 podNodeName);
