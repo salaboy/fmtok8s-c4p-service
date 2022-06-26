@@ -12,6 +12,9 @@ postgresql:
   auth:
     enablePostgresUser: true
 
+prometheus:
+  enabled: false
+  
 # define environment variables here as a map of key: value
 env:
 
