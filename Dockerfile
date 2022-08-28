@@ -10,5 +10,9 @@ COPY pom.xml target/lib* /opt/lib/
 # but at least this means we don't have to guess the name
 # we could do with a better way to know the name - or to always create an app.jar or something
 COPY target/app.jar /opt/app.jar
+
+# Otel
+COPY opentelemetry-javaagent.jar /opt/opentelemetry-javaagent.jar
+
 WORKDIR /opt
 ENTRYPOINT exec java $JAVA_OPTS -noverify -jar app.jar

@@ -12,6 +12,7 @@
 
 # Package Files #
 *.jar
+!opentelemetry-javaagent.jar
 *.war
 *.nar
 *.ear

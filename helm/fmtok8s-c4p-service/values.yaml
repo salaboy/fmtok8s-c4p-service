@@ -14,6 +14,10 @@ postgresql:
 
 prometheus:
   enabled: false
+
+tempo:
+  enabled: false
+  endpoint: 
   
 # define environment variables here as a map of key: value
 env:
