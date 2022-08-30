@@ -16,3 +16,5 @@ COPY opentelemetry-javaagent.jar /opt/opentelemetry-javaagent.jar
 
 WORKDIR /opt
 ENTRYPOINT exec java $JAVA_OPTS -noverify -jar app.jar
+
+## testing
