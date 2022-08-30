@@ -34,7 +34,7 @@ spec:
           - name: SPRING_R2DBC_USERNAME
             value: postgres
           - name: DB_ENDPOINT
-            value: {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local
+            value: {{ .Release.Name }}-postgresql
           {{- if .Values.tempo.enabled  }}
           - name: JAVA_OPTS
             value: -javaagent:/opt/opentelemetry-javaagent.jar
