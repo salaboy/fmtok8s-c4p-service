@@ -42,6 +42,23 @@ jobs:
   build:
     needs: [ setup ]
     runs-on: ubuntu-20.04
+    services:
+      # Label used to access the service container
+      postgresql:
+        # Docker Hub image
+        image: bitnami/postgresql:14.3.0
+        # Set health checks to wait until redis has started
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps port 5432 on service container to the host
+          - 5432:5432
     steps:
       - name: Checkout and Set up JDK 17 Temurin
         uses: actions/checkout@v3
@@ -53,6 +70,9 @@ jobs:
           cache: 'maven'
       - name: Build application
         run: mvn package
+        env: 
+          SPRING_RDBC2_URL: "r2dbc:postgresql://localhost:5432/postgres"
+          SPRING_RDBC2_PASSWORD: "postgres" 
       - name: Upload app.jar
         uses: actions/upload-artifact@v3
         with:
