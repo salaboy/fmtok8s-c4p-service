@@ -46,7 +46,7 @@ jobs:
       # Label used to access the service container
       postgresql:
         # Docker Hub image
-        image: bitnami/postgresql:14.3.0
+        image: postgres
         # Set health checks to wait until redis has started
         env:
           POSTGRES_PASSWORD: postgres
