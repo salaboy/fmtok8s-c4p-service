@@ -50,6 +50,7 @@ jobs:
         # Set health checks to wait until redis has started
         env:
           POSTGRES_PASSWORD: postgres
+          ALLOW_EMPTY_PASSWORD: "yes"
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
