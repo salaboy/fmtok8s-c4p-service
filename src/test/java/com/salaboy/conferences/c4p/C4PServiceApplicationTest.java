@@ -21,10 +21,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,7 +31,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = C4PServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = "app.services.config.events.enabled=false")
-@Testcontainers
 @ActiveProfiles("dev")
 public class C4PServiceApplicationTest {
 
@@ -56,16 +52,16 @@ public class C4PServiceApplicationTest {
     @Autowired
     private WebTestClient webTestClient;
 
-    @Container
-    static GenericContainer<?> posgresql = new GenericContainer<>(DockerImageName.parse("bitnami/postgresql:14.3.0"))
-            .withExposedPorts(POSTGRESQL_PORT).withEnv("ALLOW_EMPTY_PASSWORD", "yes");
+    // @Container
+    // static GenericContainer<?> posgresql = new GenericContainer<>(DockerImageName.parse("bitnami/postgresql:14.3.0"))
+    //         .withExposedPorts(POSTGRESQL_PORT).withEnv("ALLOW_EMPTY_PASSWORD", "yes");
 
 
     @DynamicPropertySource
     static void redisProperties(DynamicPropertyRegistry registry) {
         registry.add("c4p.agendaService", () -> mockWebServer.url("/agenda/").uri());
         registry.add("c4p.emailService", () -> mockWebServer.url("/email/").uri());
-        registry.add("spring.r2dbc.url", () -> "r2dbc:postgresql://" + posgresql.getHost() + ":" + posgresql.getMappedPort(POSTGRESQL_PORT) + "/postgres");
+        // registry.add("spring.r2dbc.url", () -> "r2dbc:postgresql://" + posgresql.getHost() + ":" + posgresql.getMappedPort(POSTGRESQL_PORT) + "/postgres");
         registry.add("spring.r2dbc.username", () -> "postgres");
     }
 
