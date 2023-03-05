@@ -49,7 +49,6 @@ jobs:
         image: postgres
         # Set health checks to wait until redis has started
         env:
-          POSTGRES_PASSWORD: postgres
           ALLOW_EMPTY_PASSWORD: "yes"
         # Set health checks to wait until postgres has started
         options: >-
@@ -72,8 +71,7 @@ jobs:
       - name: Build application
         run: mvn package
         env: 
-          SPRING_RDBC2_URL: "r2dbc:postgresql://localhost:5432/postgres"
-          SPRING_RDBC2_PASSWORD: "postgres" 
+          SPRING_R2DBC_URL: "r2dbc:postgresql://localhost:5432/postgres"
       - name: Upload app.jar
         uses: actions/upload-artifact@v3
         with:
