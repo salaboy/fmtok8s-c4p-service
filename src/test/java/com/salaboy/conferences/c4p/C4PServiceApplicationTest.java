@@ -52,16 +52,12 @@ public class C4PServiceApplicationTest {
     @Autowired
     private WebTestClient webTestClient;
 
-    // @Container
-    // static GenericContainer<?> posgresql = new GenericContainer<>(DockerImageName.parse("bitnami/postgresql:14.3.0"))
-    //         .withExposedPorts(POSTGRESQL_PORT).withEnv("ALLOW_EMPTY_PASSWORD", "yes");
-
+   
 
     @DynamicPropertySource
     static void redisProperties(DynamicPropertyRegistry registry) {
         registry.add("c4p.agendaService", () -> mockWebServer.url("/agenda/").uri());
         registry.add("c4p.emailService", () -> mockWebServer.url("/email/").uri());
-        // registry.add("spring.r2dbc.url", () -> "r2dbc:postgresql://" + posgresql.getHost() + ":" + posgresql.getMappedPort(POSTGRESQL_PORT) + "/postgres");
         registry.add("spring.r2dbc.username", () -> "postgres");
     }
 

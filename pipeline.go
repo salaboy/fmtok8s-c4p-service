@@ -128,7 +128,11 @@ func buildImage(ctx context.Context, nameTag string) error {
 func buildContainer(ctx context.Context) *dagger.Container {
 	c := getDaggerClient(ctx)
 
-	javaContainer := java.WithMaven(c)
+	postgres := c.Container().From("postgres").WithExposedPort(5432).WithExec(nil)
+
+	javaContainer := java.WithMaven(c).
+		WithEnvVariable("SPRING_R2DBC_URL", "r2dbc:postgresql://localhost:5432/postgres").
+		WithServiceBinding("postgres", postgres)
 
 	return javaContainer.WithExec([]string{"mvn", "package"})
 }
