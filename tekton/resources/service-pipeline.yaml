@@ -73,8 +73,8 @@ spec:
           args:
             - "package"
         sidecars: 
-        - image: redis:6
-          name: redis
+        - image: postgres
+          name: postgres
     - name: image-build
       runAfter: [maven-build]
       taskRef:
