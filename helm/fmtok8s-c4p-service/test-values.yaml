@@ -1,0 +1,12 @@
+postgresql:
+  enabled: false
+env: 
+  - name: DB_ENDPOINT
+    value: my-db-sql-postgresql
+  - name: DB_PORT
+    value: "5432"
+  - name: SPRING_R2DBC_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: my-db-sql-postgresql
+        key: postgres-password
