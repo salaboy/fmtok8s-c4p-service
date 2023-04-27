@@ -2,5 +2,8 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 11.6.6
-digest: sha256:18373b1e6ec0822d2b2d82f042835d14f6fc4a7b7b57f12d3619e81300470845
-generated: "2022-06-14T12:06:36.629149+01:00"
+- name: grafana-tempo
+  repository: https://charts.bitnami.com/bitnami
+  version: 1.4.1
+digest: sha256:ea392c56636b79ba5e0eee55abfc6c3507c85b70ae2c1f68318562c62be0f07a
+generated: "2022-08-28T00:27:07.730159-03:00"

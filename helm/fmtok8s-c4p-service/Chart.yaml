@@ -8,3 +8,7 @@ dependencies:
     version: 11.6.6
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
+  - name: grafana-tempo
+    version: 1.4.1
+    repository: https://charts.bitnami.com/bitnami
+    condition: tempo.enabled

@@ -35,7 +35,15 @@ spec:
             value: postgres
 {{- if .Values.postgresql.enabled }}            
           - name: DB_ENDPOINT
-            value: {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local
+            value: {{ .Release.Name }}-postgresql
+          {{- if .Values.tempo.enabled  }}
+          - name: JAVA_OPTS
+            value: -javaagent:/opt/opentelemetry-javaagent.jar
+          - name: OTEL_SERVICE_NAME
+            value: fmtok8s-c4p-service
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: {{ .Values.tempo.endpoint }}
+          {{- end }}
           - name: DB_PORT
             value: "5432"
           - name: SPRING_R2DBC_PASSWORD
